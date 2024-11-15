@@ -36,3 +36,60 @@ export const nftData = [
     isLocked: true,
   },
 ];
+
+export const rankingData = [
+  {
+    rank: 1,
+    name: "nickname 1",
+    score: "200,438",
+    image: require("./assets/images/logo.png"),
+  },
+  {
+    rank: 2,
+    name: "nickname 2",
+    score: "232,125",
+    image: require("./assets/images/logo.png"),
+  },
+  {
+    rank: 3,
+    name: "nickname 3",
+    score: "184,489",
+    image: require("./assets/images/logo.png"),
+  },
+  {
+    rank: 4,
+    name: "nickname 4",
+    score: "174,938",
+    image: require("./assets/images/logo.png"),
+  },
+  {
+    rank: 5,
+    name: "nickname 5",
+    score: "172,132",
+    image: require("./assets/images/logo.png"),
+  },
+  {
+    rank: 6,
+    name: "nickname 6",
+    score: "170,753",
+    image: require("./assets/images/logo.png"),
+  },
+  {
+    rank: 7,
+    name: "nickname 7",
+    score: "168,180",
+    image: require("./assets/images/logo.png"),
+  },
+  {
+    rank: 8,
+    name: "nickname 8",
+    score: "165,918",
+    image: require("./assets/images/logo.png"),
+  },
+  {
+    rank: 9,
+    name: "nickname 9",
+    score: "163,129",
+    image: require("./assets/images/logo.png"),
+  },
+];
