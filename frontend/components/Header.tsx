@@ -59,6 +59,7 @@ const styles = StyleSheet.create({
   },
   headerText: {
     fontSize: 28,
+    fontFamily: "gamhong",
     fontWeight: "900",
     fontStyle: "italic",
     textAlign: "center",

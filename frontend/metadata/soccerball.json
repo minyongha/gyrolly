@@ -1,0 +1,23 @@
+{
+  "attributes": [
+    {
+      "trait_type": "NFT",
+      "value": "Soulbound"
+    },
+    {
+      "trait_type": "Asset",
+      "value": "Non-transferable Ball"
+    },
+    {
+      "trait_type": "Title",
+      "value": "Soccer Ball"
+    },
+    {
+      "trait_type": "Price",
+      "value": 1000
+    }
+  ],
+  "description": "Soccer ball",
+  "image": "https://brown-perfect-bird-907.mypinata.cloud/ipfs/QmTChaJAUi2qC69ZYmn4SZ9Rwz8DL9kzwMxgniH3jECPDe/soccerball.png",
+  "name": "Soccer Ball"
+}

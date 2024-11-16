@@ -1,0 +1,23 @@
+{
+  "attributes": [
+    {
+      "trait_type": "NFT",
+      "value": "Soulbound"
+    },
+    {
+      "trait_type": "Asset",
+      "value": "Non-transferable Ball"
+    },
+    {
+      "trait_type": "Title",
+      "value": "Basket Ball"
+    },
+    {
+      "trait_type": "Price",
+      "value": 2000
+    }
+  ],
+  "description": "Basket ball",
+  "image": "https://brown-perfect-bird-907.mypinata.cloud/ipfs/QmTChaJAUi2qC69ZYmn4SZ9Rwz8DL9kzwMxgniH3jECPDe/basketball.png",
+  "name": "Basket Ball"
+}
