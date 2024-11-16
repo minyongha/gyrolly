@@ -4,50 +4,57 @@ import { rankingData } from "../constants";
 import axios from "axios";
 import AppContext from "@/components/context/AppContext";
 
-interface RankingScreenProps{
+interface RankingScreenProps {
   referralCode: string;
 }
 
-interface LeaderBoard{
-  num:number;
-  user_id:string;
-  wallet_address:string;
-  nickname:string;
-  profile_image:string;
-  referral_user_id:string;
-  total_point:number;
+interface LeaderBoard {
+  num: number;
+  user_id: string;
+  wallet_address: string;
+  nickname: string;
+  profile_image: string;
+  referral_user_id: string;
+  total_point: number;
 }
 
-
-const RankingScreen:React.FC<RankingScreenProps> = ({referralCode}) =>{
+const RankingScreen: React.FC<RankingScreenProps> = ({ referralCode }) => {
   const { url } = useContext(AppContext);
   const [rank, setRank] = useState<number>(0);
   const [leaderBoard, setLeaderBoard] = useState<LeaderBoard[]>([]);
 
-  const getRank = async() => {
-    try{
-      const response = await axios.post(`${url}/getRank`, {user_id: referralCode}, {headers:{"Content-Type":"application/json"}});
+  const getRank = async () => {
+    try {
+      const response = await axios.post(
+        `${url}/getRank`,
+        { user_id: referralCode },
+        { headers: { "Content-Type": "application/json" } }
+      );
       setRank(response.data.data.results[0][0].my_rank);
-    }catch(error){
+    } catch (error) {
       console.error(error);
     }
-  }
+  };
 
-  const getLeaderboard = async() => {
-    try{
-      const response = await axios.post(`${url}/getLeaderboard`, {from:1, to:100}, {headers:{"Content-Type":"application/json"}});
+  const getLeaderboard = async () => {
+    try {
+      const response = await axios.post(
+        `${url}/getLeaderboard`,
+        { from: 1, to: 100 },
+        { headers: { "Content-Type": "application/json" } }
+      );
       setLeaderBoard(response.data.data.results[0]);
-    }catch(error){
+    } catch (error) {
       console.error(error);
     }
-  }
+  };
 
   useEffect(() => {
-    if(referralCode.length === 0 ) return;
+    if (referralCode.length === 0) return;
     getRank();
     getLeaderboard();
-  }, [referralCode])
-  
+  }, [referralCode]);
+
   return (
     <View style={styles.screen}>
       <View style={styles.container}>
@@ -80,7 +87,7 @@ const RankingScreen:React.FC<RankingScreenProps> = ({referralCode}) =>{
       </View>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   screen: {
