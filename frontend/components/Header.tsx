@@ -6,7 +6,11 @@ import {
   SafeAreaView,
   ImageSourcePropType,
   Switch,
+  Pressable,
+  Image,
 } from "react-native";
+import CabinetModal from "./CabinetModal";
+import ProfileModal from "./ProfileModal";
 
 interface HeaderProps {
   isSpin: boolean;
@@ -16,9 +20,13 @@ interface HeaderProps {
 
 const Header: FC<HeaderProps> = ({ isSpin, setIsSpin, seletedIndex }) => {
   const toggleSwitch = () => setIsSpin((previousState) => !previousState);
-  const [profileImage] = useState<ImageSourcePropType>(
-    require("../assets/images/1.webp")
+  const [profileImage, setProfileImage] = useState<ImageSourcePropType>(
+    require("../assets/images/logo.png")
   );
+  const [profileModalVisible, setProfileModalVisible] =
+    useState<boolean>(false);
+  const [cabinetModalVisible, setCabinetModalVisible] =
+    useState<boolean>(false);
 
   return (
     <>
@@ -36,8 +44,32 @@ const Header: FC<HeaderProps> = ({ isSpin, setIsSpin, seletedIndex }) => {
             </View>
           )}
           <Text style={styles.headerText}>Gyrolly</Text>
+          <View style={styles.modalContainer}>
+            <Pressable onPress={() => setCabinetModalVisible(true)}>
+              <Image
+                source={require("../assets/images/pack.png")}
+                style={styles.cabinet}
+              />
+            </Pressable>
+            <Pressable
+              style={[styles.profileContainer]}
+              onPress={() => setProfileModalVisible(true)}
+            >
+              <Image source={profileImage} style={styles.profileImage} />
+            </Pressable>
+          </View>
         </View>
       </SafeAreaView>
+      <ProfileModal
+        modalVisible={profileModalVisible}
+        setModalVisible={setProfileModalVisible}
+        profileImage={profileImage}
+        setProfileImage={setProfileImage}
+      />
+      <CabinetModal
+        modalVisible={cabinetModalVisible}
+        setModalVisible={setCabinetModalVisible}
+      />
     </>
   );
 };
@@ -53,47 +85,36 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
-    position: "relative",
+    justifyContent: "space-between",
     paddingTop: 12,
+    paddingBottom: 12,
+    paddingLeft: 5,
+    paddingRight: 5,
   },
   headerText: {
+    marginLeft: "7%",
     fontSize: 28,
     fontWeight: "900",
     fontStyle: "italic",
-    textAlign: "center",
+  },
+  modalContainer: {
+    flexDirection: "row",
+    gap: 4,
   },
   toggleContainer: {
-    position: "absolute",
-    top: 10,
-    left: 20,
     zIndex: 1,
-  },
-  cabinetContainer: {
-    position: "absolute",
-    top: 3,
-    right: 58,
-    zIndex: 1,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 4,
   },
   profileContainer: {
-    position: "absolute",
-    right: 16,
     zIndex: 1,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 2,
-    elevation: 4,
   },
   profileImage: {
     width: 35,
     height: 35,
     borderRadius: 20,
+  },
+  cabinet: {
+    width: 35,
+    height: 35,
   },
 });
 
