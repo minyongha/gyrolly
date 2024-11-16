@@ -1,24 +1,53 @@
 import { StyleSheet, Text, View, Image, ScrollView } from "react-native";
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { rankingData } from "../constants";
 import axios from "axios";
+import AppContext from "@/components/context/AppContext";
 
-export default function RankingScreen() {
+interface RankingScreenProps{
+  referralCode: string;
+}
 
-  const getLeaderboard = async () => {
-    try {
-      const response = await axios.post(`http://localhost:5002/api/getLeaderboard`,{from:1, to:100},{headers: {"Content-Type":"application/json"}})
-      console.log("LeaderBoard", response.data.data);
-    } catch (error) {
+interface LeaderBoard{
+  num:number;
+  user_id:string;
+  wallet_address:string;
+  nickname:string;
+  profile_image:string;
+  referral_user_id:string;
+  total_point:number;
+}
+
+
+const RankingScreen:React.FC<RankingScreenProps> = ({referralCode}) =>{
+  const { url } = useContext(AppContext);
+  const [rank, setRank] = useState<number>(0);
+  const [leaderBoard, setLeaderBoard] = useState<LeaderBoard[]>([]);
+
+  const getRank = async() => {
+    try{
+      const response = await axios.post(`${url}/getRank`, {user_id: referralCode}, {headers:{"Content-Type":"application/json"}});
+      setRank(response.data.data.results[0][0].my_rank);
+    }catch(error){
       console.error(error);
     }
   }
-  
-  useEffect(() => {
-    getLeaderboard();
-  }, [])
-  
 
+  const getLeaderboard = async() => {
+    try{
+      const response = await axios.post(`${url}/getLeaderboard`, {from:1, to:100}, {headers:{"Content-Type":"application/json"}});
+      setLeaderBoard(response.data.data.results[0]);
+    }catch(error){
+      console.error(error);
+    }
+  }
+
+  useEffect(() => {
+    if(referralCode.length === 0 ) return;
+    getRank();
+    getLeaderboard();
+  }, [referralCode])
+  
   return (
     <View style={styles.screen}>
       <View style={styles.container}>

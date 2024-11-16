@@ -1,6 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { View, Text, Image, StyleSheet } from "react-native";
 import { Ball } from "../components/Ball";
+import AppContext from "@/components/context/AppContext";
+import axios from "axios";
 
 interface HomeScreenProps {
   isSpin: boolean;

@@ -9,13 +9,19 @@
     "web": "expo start --web"
   },
   "dependencies": {
-    "axios": "^1.7.7",
     "@gorhom/bottom-sheet": "^5.0.5",
+    "@react-native-async-storage/async-storage": "^1.24.0",
     "@react-navigation/native": "^7.0.3",
+    "@react-navigation/native-stack": "^7.0.3",
     "@react-navigation/stack": "^7.0.3",
     "@react-three/drei": "^9.116.2",
     "@react-three/fiber": "^8.17.10",
+    "@walletconnect/client": "^1.8.0",
+    "@walletconnect/modal-react-native": "^1.1.0",
+    "@walletconnect/react-native-compat": "^2.17.2",
+    "axios": "^1.7.7",
     "bs58": "^6.0.0",
+    "ethers": "^5.7.2",
     "expo": "^51.0.28",
     "expo-clipboard": "~6.0.3",
     "expo-gl": "^14.0.2",
@@ -25,7 +31,9 @@
     "react-native": "0.74.5",
     "react-native-gifted-charts": "^1.4.47",
     "react-native-vector-icons": "^10.2.0",
-    "three": "^0.170.0"
+    "three": "^0.170.0",
+    "unique-names-generator": "^4.7.1",
+    "expo-application": "~5.9.1"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

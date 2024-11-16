@@ -4,6 +4,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import MainScreen from "./screens/MainScreen";
 import AppContext from "./components/context/AppContext";
 import { Dimensions, StatusBar } from "react-native";
+import LoginScreen from "./screens/LoginScreen";
 
 export type RootStackParamList = {
   Login: undefined;
@@ -25,20 +26,31 @@ export default function App() {
     setNickname,
     selectedBall,
     setSelectedBall,
+    url: 'http://192.168.1.50:5003'
   };
 
   return (
     <AppContext.Provider value={values}>
-      <StatusBar barStyle={"dark-content"} />
-      <NavigationContainer>
-        <Stack.Navigator initialRouteName="Main">
-          <Stack.Screen
-            name="Main"
-            component={MainScreen}
-            options={{ headerShown: false }}
-          />
-        </Stack.Navigator>
-      </NavigationContainer>
-    </AppContext.Provider>
+    <StatusBar barStyle={"dark-content"} />
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="Login">
+        <Stack.Screen name="Login" options={{ headerShown: false }}>
+          {(props) => (
+            <LoginScreen
+              {...props}
+              setIsLoggedIn={() => {
+                setIsLoggedIn(true);
+              }}
+            />
+          )}
+        </Stack.Screen>
+        <Stack.Screen
+          name="Main"
+          component={MainScreen}
+          options={{ headerShown: false }}
+        />
+      </Stack.Navigator>
+    </NavigationContainer>
+  </AppContext.Provider>
   );
 }

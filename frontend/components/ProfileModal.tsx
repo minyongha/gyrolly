@@ -14,6 +14,11 @@ import * as ImagePicker from "expo-image-picker";
 import { ImageSourcePropType } from "react-native";
 import * as Clipboard from "expo-clipboard";
 import AppContext from "./context/AppContext";
+import { useWalletConnectModal } from "@walletconnect/modal-react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { StackActions, useNavigation } from "@react-navigation/native";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { RootStackParamList } from "@/App";
 
 interface ProfileModalProps {
   modalVisible: boolean;
@@ -28,6 +33,9 @@ const ProfileModal: FC<ProfileModalProps> = ({
   profileImage,
   setProfileImage,
 }) => {
+  const { isConnected, provider, address } = useWalletConnectModal();
+  const navigation =
+  useNavigation<NativeStackScreenProps<RootStackParamList>["navigation"]>();
   const { nickname, setNickname } = useContext(AppContext);
   const [selectedImage, setSelectedImage] =
     useState<ImageSourcePropType | null>(null);
@@ -68,6 +76,22 @@ const ProfileModal: FC<ProfileModalProps> = ({
     Clipboard.setString(referralCode);
     setIsCopied(true);
     setTimeout(() => setIsCopied(false), 1100);
+  };
+
+  const handleDisconnectButtonPress = async () => {
+    if (isConnected) {
+      try {
+        await provider?.disconnect();
+        await AsyncStorage.removeItem("walletconnect");
+        if (provider) {
+          provider.session = undefined;
+        }
+        setModalVisible(false);
+        navigation.dispatch(StackActions.popToTop());
+      } catch (error) {
+        console.error("Failed to disconnect:", error);
+      }
+    }
   };
 
   return (
@@ -137,7 +161,7 @@ const ProfileModal: FC<ProfileModalProps> = ({
             </Pressable>
           </View>
           <View style={styles.buttonContainer}>
-            <Pressable style={styles.disconnectButton} onPress={() => {}}>
+            <Pressable style={styles.disconnectButton} onPress={handleDisconnectButtonPress}>
               <Text style={styles.actionText}>Disconnect</Text>
             </Pressable>
             <Pressable
