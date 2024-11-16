@@ -155,7 +155,7 @@ export const Ball: FC<BallProps> = ({ isSpin, setCount, spinCount }) => {
 
   return (
     <View style={styles.ballContainer} {...panResponder.panHandlers}>
-      <Text>IM ZBALL</Text>
+      <Text>IM ZBssALL</Text>
       <Canvas style={{ width: 480 }}>
         <ambientLight intensity={2.0} />
         <directionalLight position={[0, 10, 5]} intensity={1.5} />

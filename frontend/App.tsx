@@ -1,19 +1,21 @@
 import React, { useState } from "react";
-import { StatusBar } from "expo-status-bar";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-import RankingScreen from "./screens/RankingScreen";
-import { StyleSheet, Text, View, Dimensions } from "react-native";
-import HomeScreen from "@/screens/HomeScreen";
-
-import BottomNavigation from "./components/BottomNavigation";
+import MainScreen from "./screens/MainScreen";
 import AppContext from "./components/context/AppContext";
+import { Dimensions, StatusBar } from "react-native";
 
-const Stack = createStackNavigator();
+export type RootStackParamList = {
+  Login: undefined;
+  Main: undefined;
+  Ranking: undefined;
+};
+
+const Stack = createStackNavigator<RootStackParamList>();
 
 export default function App() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [nickname, setNickname] = useState<string>("");
-
   const [selectedBall, setSelectedBall] = useState<string>("soccerball");
 
   const values = {
@@ -27,29 +29,16 @@ export default function App() {
 
   return (
     <AppContext.Provider value={values}>
+      <StatusBar barStyle={"dark-content"} />
       <NavigationContainer>
-        <Stack.Navigator>
-          <Stack.Screen name="Home">
-            {(props) => <HomeScreen isSpin={true} />}
-          </Stack.Screen>
-          <Stack.Screen name="Ranking">
-            {(props) => <RankingScreen />}
-          </Stack.Screen>
+        <Stack.Navigator initialRouteName="Main">
+          <Stack.Screen
+            name="Main"
+            component={MainScreen}
+            options={{ headerShown: false }}
+          />
         </Stack.Navigator>
       </NavigationContainer>
-      <View style={styles.container}>
-        {/* <Text>Open up App.tsx to start working on your app!</Text> */}
-        <StatusBar style="auto" />
-      </View>
     </AppContext.Provider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});
