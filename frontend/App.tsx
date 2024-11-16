@@ -4,9 +4,9 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import RankingScreen from "./screens/RankingScreen";
 import { StyleSheet, Text, View, Dimensions } from "react-native";
+import HomeScreen from "@/screens/HomeScreen";
 
 import BottomNavigation from "./components/BottomNavigation";
-import MainScreen from "screens/MainScreen";
 import AppContext from "./components/context/AppContext";
 
 const Stack = createStackNavigator();
@@ -28,7 +28,9 @@ export default function App() {
   return (
     <AppContext.Provider value={values}>
       <Stack.Navigator>
-        <Stack.Screen name="Home">{(props) => <MainScreen />}</Stack.Screen>
+        <Stack.Screen name="Home">
+          {(props) => <HomeScreen isSpin={true} />}
+        </Stack.Screen>
         <Stack.Screen name="Ranking">
           {(props) => <RankingScreen />}
         </Stack.Screen>
