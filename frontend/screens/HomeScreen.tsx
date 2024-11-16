@@ -80,6 +80,7 @@ export default HomeScreen;
 const styles = StyleSheet.create({
   mainContent: {
     flex: 1,
+    fontFamily: "Lato",
     alignItems: "center",
     justifyContent: "center",
   },
