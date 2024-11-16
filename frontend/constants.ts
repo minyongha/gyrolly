@@ -93,3 +93,36 @@ export const rankingData = [
     image: require("./assets/images/logo.png"),
   },
 ];
+
+export const cabinetData = [
+  {
+    image: require("./assets/images/cabinet/soccerball.png"),
+    model: "soccerball",
+    isLocked: false,
+  },
+  {
+    image: require("./assets/images/cabinet/basketball.png"),
+    model: "basketball",
+    isLocked: false,
+  },
+  {
+    image: require("./assets/images/cabinet/earth.png"),
+    model: "earth",
+    isLocked: true,
+  },
+  {
+    image: require("./assets/images/cabinet/snowball.png"),
+    model: "snowball",
+    isLocked: true,
+  },
+  {
+    image: require("./assets/images/cabinet/stone.png"),
+    model: "stone",
+    isLocked: true,
+  },
+  {
+    image: require("./assets/images/cabinet/pokeball.png"),
+    model: "pokeball",
+    isLocked: true,
+  },
+];
