@@ -36,7 +36,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ isSpin, referralCode }) => {
   }
 
   useEffect(() => {
-    const ws = new WebSocket("ws://192.168.45.160:8080");
+    const ws = new WebSocket("ws://10.24.60.53:8083");
     console.log("ws: ", ws);
 
     ws.onmessage = (event) => {

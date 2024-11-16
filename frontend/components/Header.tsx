@@ -127,6 +127,7 @@ const styles = StyleSheet.create({
   headerText: {
     marginLeft: "7%",
     fontSize: 28,
+    fontFamily: "gamhong",
     fontWeight: "900",
     fontStyle: "italic",
   },
