@@ -5,6 +5,8 @@ import NFTScreen from "./NFTScreen";
 import RankingScreen from "./RankingScreen";
 import Header from "../components/Header";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import BottomNavigation from "@/components/BottomNavigation";
+import CustomBottomSheet from "@/components/CustomBottomSheet";
 import useGenerateReferralCode from "@/hooks/useGenerateReferralCode";
 import axios from "axios";
 import AppContext from "@/components/context/AppContext";
@@ -81,6 +83,11 @@ export default function MainScreen() {
         referralCode={referralCode}
       />
       <SafeAreaView style={styles.container}>{renderContent()}</SafeAreaView>
+      <CustomBottomSheet />
+      <BottomNavigation
+        selectedIndex={selectedIndex}
+        setSelectedIndex={setSelectedIndex}
+      />
     </GestureHandlerRootView>
   );
 }

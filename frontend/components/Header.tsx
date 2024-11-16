@@ -57,17 +57,19 @@ const Header: FC<HeaderProps> = ({ isSpin, setIsSpin, seletedIndex, referralCode
     <>
       <SafeAreaView style={styles.headerContainer}>
         <View style={styles.header}>
-          {seletedIndex == 0 && (
-            <View style={styles.toggleContainer}>
-              <Switch
-                style={{ transform: [{ scaleX: 0.8 }, { scaleY: 0.8 }] }}
-                trackColor={{ false: "#767577", true: "#81b0ff" }}
-                thumbColor={isSpin ? "#f5dd4b" : "#f4f3f4"}
-                onValueChange={toggleSwitch}
-                value={isSpin}
-              />
-            </View>
-          )}
+          <View style={styles.leftContainer}>
+            {seletedIndex == 0 && (
+              <View style={styles.toggleContainer}>
+                <Switch
+                  style={{ transform: [{ scaleX: 0.8 }, { scaleY: 0.8 }] }}
+                  trackColor={{ false: "#767577", true: "#81b0ff" }}
+                  thumbColor={isSpin ? "#f5dd4b" : "#f4f3f4"}
+                  onValueChange={toggleSwitch}
+                  value={isSpin}
+                />
+              </View>
+            )}
+          </View>
           <Text style={styles.headerText}>Gyrolly</Text>
           <View style={styles.modalContainer}>
             <Pressable onPress={() => setCabinetModalVisible(true)}>
@@ -113,10 +115,14 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingTop: 12,
-    paddingBottom: 12,
+    height: "100%",
+    paddingTop: 10,
     paddingLeft: 5,
     paddingRight: 5,
+  },
+  leftContainer: {
+    flex: 0.3,
+    alignItems: "flex-start",
   },
   headerText: {
     marginLeft: "7%",
