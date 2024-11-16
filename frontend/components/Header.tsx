@@ -100,6 +100,7 @@ const styles = StyleSheet.create({
   headerText: {
     marginLeft: "7%",
     fontSize: 28,
+    fontFamily: "문경 감홍사과",
     fontWeight: "900",
     fontStyle: "italic",
   },
