@@ -420,5 +420,4 @@ db.query(query, (err, results, fields) => {
   console.log("쿼리 결과:", results);
 });
 
-
 db.end();

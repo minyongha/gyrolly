@@ -17,17 +17,15 @@ var query = `
 `;
 
 db.query(query, (err, results, fields) => {
-    if (err) {
-      console.error("쿼리 실행에 실패했습니다:", err);
-      return;
-    }
-  
-    console.log("쿼리 결과:", results);
-  });
+  if (err) {
+    console.error("쿼리 실행에 실패했습니다:", err);
+    return;
+  }
 
+  console.log("쿼리 결과:", results);
+});
 
-
-  var query = `
+var query = `
   CREATE TABLE config (
     id INT AUTO_INCREMENT PRIMARY KEY,
     spin_point_per_count INT NOT NULL,
@@ -39,16 +37,15 @@ db.query(query, (err, results, fields) => {
 `;
 
 db.query(query, (err, results, fields) => {
-    if (err) {
-      console.error("쿼리 실행에 실패했습니다:", err);
-      return;
-    }
-  
-    console.log("쿼리 결과:", results);
-  });
+  if (err) {
+    console.error("쿼리 실행에 실패했습니다:", err);
+    return;
+  }
 
+  console.log("쿼리 결과:", results);
+});
 
-  var query = `
+var query = `
   CREATE TABLE daily_count (
     user_id CHAR(8) NOT NULL,
     date DATE NOT NULL,
@@ -62,16 +59,15 @@ db.query(query, (err, results, fields) => {
 `;
 
 db.query(query, (err, results, fields) => {
-    if (err) {
-      console.error("쿼리 실행에 실패했습니다:", err);
-      return;
-    }
-  
-    console.log("쿼리 결과:", results);
-  });
+  if (err) {
+    console.error("쿼리 실행에 실패했습니다:", err);
+    return;
+  }
 
+  console.log("쿼리 결과:", results);
+});
 
-  var query = `
+var query = `
   CREATE TABLE auth_tokens (
     user_id CHAR(8) NOT NULL PRIMARY KEY,
     token CHAR(64) NOT NULL UNIQUE, 
