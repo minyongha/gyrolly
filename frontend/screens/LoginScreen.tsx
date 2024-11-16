@@ -1,4 +1,11 @@
-import { StyleSheet, Text, View, Pressable } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Pressable,
+  ImageSourcePropType,
+  Image,
+} from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../App";
 import WalletConnect from "@walletconnect/client";
@@ -32,6 +39,8 @@ const providerMetadata = {
 type LoginScreenProps = NativeStackScreenProps<RootStackParamList, "Login"> & {
   setIsLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
 };
+
+const logo = require("../assets/images/logo.png");
 
 const LoginScreen: React.FC<LoginScreenProps> = ({
   setIsLoggedIn,
@@ -137,18 +146,19 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
     <>
       <dynamicClient.reactNative.WebView />
       <View style={styles.container}>
-        <Text style={styles.title}>GyRolly</Text>
+        <Text style={styles.title}>Gyrolly</Text>
+        <Image source={logo} style={styles.image} />
         <Pressable onPress={handleButtonPress} style={styles.button}>
           <Text style={styles.buttonText}>Connect Wallet</Text>
         </Pressable>
-        {/* <WalletConnectModal
+        <WalletConnectModal
           explorerRecommendedWalletIds={[
             "c57ca95b47569778a828d19178114f4db188b89b763c899ba0be274e97267d96",
           ]}
           explorerExcludedWalletIds={"ALL"}
           projectId={projectId}
           providerMetadata={providerMetadata}
-        /> */}
+        />
       </View>
     </>
   );
@@ -160,18 +170,27 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
+    fontFamily: "Lato",
   },
   title: {
     fontSize: 32,
     fontWeight: "900",
     marginBottom: 10,
+    fontFamily: "문경 감흥사과",
     fontStyle: "italic",
   },
   button: {
     backgroundColor: "#FF972F",
     paddingVertical: 12,
     paddingHorizontal: 70,
+    marginTop: 10,
     borderRadius: 8,
+  },
+  image: {
+    // flex: 1,
+    resizeMode: "contain",
+    width: "80%",
+    height: 500,
   },
   buttonText: {
     fontSize: 20,

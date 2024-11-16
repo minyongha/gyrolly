@@ -66,6 +66,7 @@ export default NFTScreen;
 const styles = StyleSheet.create({
   nftContainer: {
     flex: 1,
+    fontFamily: "Lato Regular",
     justifyContent: "center",
     alignItems: "center",
   },
@@ -74,6 +75,7 @@ const styles = StyleSheet.create({
     marginTop: 50,
   },
   title: {
+    fontFamily: "Lato Regular",
     fontSize: 15,
     fontWeight: "bold",
   },

@@ -95,6 +95,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
   },
   container: {
+    fontFamily: "Lato",
     flexGrow: 1,
     alignItems: "center",
     paddingVertical: "13%",
