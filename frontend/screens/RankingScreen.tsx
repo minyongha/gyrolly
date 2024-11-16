@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
   rankContainer: {
     marginTop: "5%",
     width: "95%",
-    height: "100%",
+    height: "10%",
   },
   rankItem: {
     flexDirection: "row",

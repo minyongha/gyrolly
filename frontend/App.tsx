@@ -1,6 +1,7 @@
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View } from "react-native";
 import RankingScreen from "./screens/RankingScreen";
+import BottomSheet from "@gorhom/bottom-sheet";
 
 export default function App() {
   return (
