@@ -3,6 +3,7 @@ import { View, Text, Image, StyleSheet } from "react-native";
 import { Ball } from "../components/Ball";
 import AppContext from "@/components/context/AppContext";
 import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 interface HomeScreenProps {
   isSpin: boolean;
@@ -13,7 +14,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ isSpin }) => {
   const [count, setCount] = useState(0);
 
   useEffect(() => {
-    const ws = new WebSocket("ws://192.168.45.160:8080");
+    const ws = new WebSocket("ws://10.24.60.53:8083");
     console.log("ws: ", ws);
 
     ws.onmessage = (event) => {
@@ -25,6 +26,33 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ isSpin }) => {
       ws.close();
     };
   }, []);
+
+  const saveCount = async (value: number) => {
+    try {
+      await AsyncStorage.setItem("count", value.toString());
+    } catch (error) {
+      console.error("Failed to save the count:", error);
+    }
+  };
+
+  const loadCount = async () => {
+    try {
+      const storedCount = await AsyncStorage.getItem("count");
+      if (storedCount !== null) {
+        setCount(parseInt(storedCount, 10));
+      }
+    } catch (error) {
+      console.error("Failed to load the count:", error);
+    }
+  };
+
+  useEffect(() => {
+    loadCount();
+  }, []);
+
+  useEffect(() => {
+    saveCount(count);
+  }, [count]);
 
   return (
     <View
