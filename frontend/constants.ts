@@ -8,31 +8,31 @@ export const nftData = [
   {
     name: "Basketball",
     image: require("./assets/images/cabinet/basketball.png"),
-    point: 2000,
+    point: 10000,
     isLocked: false,
   },
   {
     name: "Earth",
     image: require("./assets/images/cabinet/earth.png"),
-    point: 4000,
+    point: 50000,
     isLocked: true,
   },
   {
     name: "Snow Ball",
     image: require("./assets/images/cabinet/snowball.png"),
-    point: 8000,
+    point: 100000,
     isLocked: true,
   },
   {
     name: "Stone",
     image: require("./assets/images/cabinet/stone.png"),
-    point: 16000,
+    point: 500000,
     isLocked: true,
   },
   {
     name: "Pokeball",
     image: require("./assets/images/cabinet/pokeball.png"),
-    point: 32000,
+    point: 1000000,
     isLocked: true,
   },
 ];

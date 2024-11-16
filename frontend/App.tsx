@@ -26,7 +26,7 @@ export default function App() {
     setNickname,
     selectedBall,
     setSelectedBall,
-    url: "http://192.168.1.50:5003",
+    url: "http://10.24.19.86:5003",
   };
 
   return (

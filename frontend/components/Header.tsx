@@ -13,6 +13,8 @@ import CabinetModal from "./CabinetModal";
 import ProfileModal from "./ProfileModal";
 import axios from "axios";
 import AppContext from "./context/AppContext";
+import { useWalletConnectModal } from "@walletconnect/modal-react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 interface HeaderProps {
   isSpin: boolean;
@@ -31,9 +33,10 @@ interface User{
 
 const Header: FC<HeaderProps> = ({ isSpin, setIsSpin, seletedIndex, referralCode }) => {
   const { url } = useContext(AppContext);
+  const { isConnected, provider, address } = useWalletConnectModal();
   const toggleSwitch = () => setIsSpin((previousState) => !previousState);
   const [profileImage, setProfileImage] = useState<ImageSourcePropType>(
-    require("../assets/images/logo.png")
+    require("../assets/images/profile.png")
   );
   const [profileModalVisible, setProfileModalVisible] =
     useState<boolean>(false);
@@ -80,7 +83,14 @@ const Header: FC<HeaderProps> = ({ isSpin, setIsSpin, seletedIndex, referralCode
             </Pressable>
             <Pressable
               style={[styles.profileContainer]}
-              onPress={() => setProfileModalVisible(true)}
+              // onPress={() => setProfileModalVisible(true)}
+              onPress={async() => {
+                 await provider?.disconnect();
+                await AsyncStorage.removeItem("walletconnect");
+                if (provider) {
+                  provider.session = undefined;
+                }
+              }}
             >
               <Image source={profileImage} style={styles.profileImage} />
             </Pressable>
@@ -127,7 +137,7 @@ const styles = StyleSheet.create({
   headerText: {
     marginLeft: "7%",
     fontSize: 28,
-    fontFamily: "문경 감홍사과",
+    fontFamily: "gamhong",
     fontWeight: "900",
     fontStyle: "italic",
   },
@@ -140,6 +150,9 @@ const styles = StyleSheet.create({
   },
   profileContainer: {
     zIndex: 1,
+    marginRight:4,
+    marginLeft:6,
+    backgroundColor:"red"
   },
   profileImage: {
     width: 35,

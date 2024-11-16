@@ -21,7 +21,6 @@ import useGenerateNickname from "../hooks/useGenerateNickname";
 import AppContext from "../components/context/AppContext";
 import useGenerateReferralCode from "../hooks/useGenerateReferralCode";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { dynamicClient } from "../utils/dynamicClient";
 
 const projectId = "b0abb773eb9bb357ded7c9e115f724d9";
 
@@ -49,33 +48,28 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
   const { open, isConnected, provider, address } = useWalletConnectModal();
   const { setNickname, nickname, url } = useContext(AppContext);
   const web3Provider = useMemo(
-    () => (provider ? new ethers.providers.Web3Provider(provider) : undefined),
+    () => (provider ? new ethers.providers.JsonRpcProvider("https://testnet.evm.nodes.onflow.org") : undefined),
     [provider]
   );
 
-  // useEffect(() => {
-  //   if (isConnected && provider) {
-  //     if (!address) return;
-  //     const referCode = useGenerateReferralCode(address);
+  useEffect(() => {
+    if (isConnected && provider) {
+      if (!address) return;
+      const referCode = useGenerateReferralCode(address);
 
-  //     login(referCode);
+      login(referCode);
 
-  //     setIsLoggedIn(true);
-  //     navigation.navigate("Main");
-  //   }
-  // }, [isConnected, provider]);
+      setIsLoggedIn(true);
+      navigation.navigate("Main");
+    }
+  }, [isConnected, provider]);
 
   const handleButtonPress = async () => {
-    dynamicClient.ui.auth.show();
-    if (dynamicClient.wallets.primary?.address) {
-      setIsLoggedIn(true);
+    if (isConnected) {
+      return provider?.disconnect();
     }
-
-    // if (isConnected) {
-    //   return provider?.disconnect();
-    // }s
-    // setNickname(useGenerateNickname());
-    // return open();
+    setNickname(useGenerateNickname());
+    return open();
   };
 
   useEffect(() => {
@@ -144,7 +138,6 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
 
   return (
     <>
-      <dynamicClient.reactNative.WebView />
       <View style={styles.container}>
         <Text style={styles.title}>Gyrolly</Text>
         <Image source={logo} style={styles.image} />
@@ -173,9 +166,10 @@ const styles = StyleSheet.create({
     fontFamily: "Lato",
   },
   title: {
-    fontSize: 32,
+    fontSize: 60,
     fontWeight: "900",
-    marginBottom: 10,
+    marginBottom: -130,
+    zIndex:1,
     fontFamily: "문경 감흥사과",
     fontStyle: "italic",
   },
