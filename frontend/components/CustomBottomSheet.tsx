@@ -50,10 +50,10 @@ const CustomBottomSheet = () => {
 
   return (
     <BottomSheet
-      snapPoints={["20%", "58%"]}
+      snapPoints={["50%", "66%"]}
       onChange={handleSheetChanges}
       handleComponent={renderHandle}
-      maxDynamicContentSize={77}
+      maxDynamicContentSize={83}
     >
       <BottomSheetView style={styles.contentContainer}>
         <View style={styles.totalPointsSection}>

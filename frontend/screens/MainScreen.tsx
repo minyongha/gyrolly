@@ -5,6 +5,8 @@ import NFTScreen from "./NFTScreen";
 import RankingScreen from "./RankingScreen";
 import Header from "../components/Header";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import BottomNavigation from "@/components/BottomNavigation";
+import CustomBottomSheet from "@/components/CustomBottomSheet";
 
 export default function MainScreen() {
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
@@ -31,6 +33,11 @@ export default function MainScreen() {
         seletedIndex={selectedIndex}
       />
       <SafeAreaView style={styles.container}>{renderContent()}</SafeAreaView>
+      <CustomBottomSheet />
+      <BottomNavigation
+        selectedIndex={selectedIndex}
+        setSelectedIndex={setSelectedIndex}
+      />
     </GestureHandlerRootView>
   );
 }
