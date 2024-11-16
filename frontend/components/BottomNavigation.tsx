@@ -7,13 +7,36 @@ const navItems = [
   { name: "star-outline", label: "Ranking", index: 2 },
 ];
 
-const BottomNavigation = () => {
+interface BottomNavigationProps {
+  selectedIndex: number;
+  setSelectedIndex: React.Dispatch<React.SetStateAction<number>>;
+}
+
+const BottomNavigation: React.FC<BottomNavigationProps> = ({
+  selectedIndex,
+  setSelectedIndex,
+}) => {
   return (
     <View style={styles.bottomNavigationContainer}>
       {navItems.map((item) => (
-        <TouchableOpacity key={item.index} style={styles.navItem}>
-          <Icon name={item.name} size={24} color={"#000"} />
-          <Text style={styles.navLabel}>{item.label}</Text>
+        <TouchableOpacity
+          key={item.index}
+          onPress={() => setSelectedIndex(item.index)}
+          style={styles.navItem}
+        >
+          <Icon
+            name={item.name}
+            size={24}
+            color={selectedIndex === item.index ? "#ffa500" : "grey"}
+          />
+          <Text
+            style={[
+              styles.navLabel,
+              selectedIndex === item.index && { color: "#ffa500" },
+            ]}
+          >
+            {item.label}
+          </Text>
         </TouchableOpacity>
       ))}
     </View>
