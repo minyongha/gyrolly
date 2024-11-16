@@ -14,6 +14,7 @@ import useGenerateNickname from "../hooks/useGenerateNickname";
 import AppContext from "../components/context/AppContext";
 import useGenerateReferralCode from "../hooks/useGenerateReferralCode";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { dynamicClient } from "../utils/dynamicClient";
 
 const projectId = "b0abb773eb9bb357ded7c9e115f724d9";
 
@@ -43,24 +44,29 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
     [provider]
   );
 
-  useEffect(() => {
-    if (isConnected && provider) {
-      if (!address) return;
-      const referCode = useGenerateReferralCode(address);
+  // useEffect(() => {
+  //   if (isConnected && provider) {
+  //     if (!address) return;
+  //     const referCode = useGenerateReferralCode(address);
 
-      login(referCode);
+  //     login(referCode);
 
-      setIsLoggedIn(true);
-      navigation.navigate("Main");
-    }
-  }, [isConnected, provider]);
+  //     setIsLoggedIn(true);
+  //     navigation.navigate("Main");
+  //   }
+  // }, [isConnected, provider]);
 
   const handleButtonPress = async () => {
-    if (isConnected) {
-      return provider?.disconnect();
+    dynamicClient.ui.auth.show();
+    if (dynamicClient.wallets.primary?.address) {
+      setIsLoggedIn(true);
     }
-    setNickname(useGenerateNickname());
-    return open();
+
+    // if (isConnected) {
+    //   return provider?.disconnect();
+    // }s
+    // setNickname(useGenerateNickname());
+    // return open();
   };
 
   useEffect(() => {
@@ -128,20 +134,23 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>GyRolly</Text>
-      <Pressable onPress={handleButtonPress} style={styles.button}>
-        <Text style={styles.buttonText}>Connect Wallet</Text>
-      </Pressable>
-      <WalletConnectModal
-        explorerRecommendedWalletIds={[
-          "c57ca95b47569778a828d19178114f4db188b89b763c899ba0be274e97267d96",
-        ]}
-        explorerExcludedWalletIds={"ALL"}
-        projectId={projectId}
-        providerMetadata={providerMetadata}
-      />
-    </View>
+    <>
+      <dynamicClient.reactNative.WebView />
+      <View style={styles.container}>
+        <Text style={styles.title}>GyRolly</Text>
+        <Pressable onPress={handleButtonPress} style={styles.button}>
+          <Text style={styles.buttonText}>Connect Wallet</Text>
+        </Pressable>
+        {/* <WalletConnectModal
+          explorerRecommendedWalletIds={[
+            "c57ca95b47569778a828d19178114f4db188b89b763c899ba0be274e97267d96",
+          ]}
+          explorerExcludedWalletIds={"ALL"}
+          projectId={projectId}
+          providerMetadata={providerMetadata}
+        /> */}
+      </View>
+    </>
   );
 };
 
