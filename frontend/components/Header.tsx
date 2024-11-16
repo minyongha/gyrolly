@@ -1,4 +1,4 @@
-import React, { FC, useState } from "react";
+import React, { FC, useContext, useState } from "react";
 import {
   View,
   Text,
@@ -11,14 +11,26 @@ import {
 } from "react-native";
 import CabinetModal from "./CabinetModal";
 import ProfileModal from "./ProfileModal";
+import axios from "axios";
+import AppContext from "./context/AppContext";
 
 interface HeaderProps {
   isSpin: boolean;
   setIsSpin: React.Dispatch<React.SetStateAction<boolean>>;
   seletedIndex: number;
+  referralCode: string;
 }
 
-const Header: FC<HeaderProps> = ({ isSpin, setIsSpin, seletedIndex }) => {
+interface User{
+  user_id:string;
+  wallet_address: string;
+  nickname: string;
+  profile: string;
+  referral_user_id:string;
+}
+
+const Header: FC<HeaderProps> = ({ isSpin, setIsSpin, seletedIndex, referralCode }) => {
+  const { url } = useContext(AppContext);
   const toggleSwitch = () => setIsSpin((previousState) => !previousState);
   const [profileImage, setProfileImage] = useState<ImageSourcePropType>(
     require("../assets/images/logo.png")
@@ -28,6 +40,19 @@ const Header: FC<HeaderProps> = ({ isSpin, setIsSpin, seletedIndex }) => {
   const [cabinetModalVisible, setCabinetModalVisible] =
     useState<boolean>(false);
 
+    const [userInfo, setUserInfo] = useState<User>();
+
+    const getUserInfo = async() => {
+      try{
+        console.log("REFER",referralCode)
+        const response = await axios.post(`${url}/getUser`, {user_id: referralCode}, {headers: {"Content-Type":'application/json'}})
+        console.log("userInfo",response.data.data.results[0])
+        setUserInfo(response.data.data.results[0][0]);
+      }catch(error){
+        console.error(error);
+      }
+    }
+  
   return (
     <>
       <SafeAreaView style={styles.headerContainer}>
@@ -65,6 +90,8 @@ const Header: FC<HeaderProps> = ({ isSpin, setIsSpin, seletedIndex }) => {
         setModalVisible={setProfileModalVisible}
         profileImage={profileImage}
         setProfileImage={setProfileImage}
+        userInfo={userInfo!}
+        getUserInfo={getUserInfo}
       />
       <CabinetModal
         modalVisible={cabinetModalVisible}

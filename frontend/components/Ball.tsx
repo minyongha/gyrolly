@@ -107,11 +107,23 @@ interface BallProps {
   isSpin: boolean;
   setCount: React.Dispatch<React.SetStateAction<number>>;
   spinCount: number;
+  count: number;
+  sendCount: (count:number) => void;
 }
 
-export const Ball: FC<BallProps> = ({ isSpin, setCount, spinCount }) => {
+export const Ball: FC<BallProps> = ({ isSpin, setCount, spinCount, count, sendCount }) => {
   const [rotationVelocity, setRotationVelocity] = useState({ x: 0, y: 0 });
   const slid = useRef(false);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const [inactive, setInactive] = useState(true);
+
+  const resetTimeout = () => {
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    timeoutRef.current = setTimeout(() => {
+      setInactive(true);
+      sendCount(count);
+    }, 3000);
+  };
 
   const panResponder = PanResponder.create({
     onMoveShouldSetPanResponder: () => true,
@@ -133,6 +145,8 @@ export const Ball: FC<BallProps> = ({ isSpin, setCount, spinCount }) => {
         y: prev.y * 0.95,
       }));
       slid.current = false;
+      resetTimeout();
+
     },
   });
 
@@ -155,7 +169,6 @@ export const Ball: FC<BallProps> = ({ isSpin, setCount, spinCount }) => {
 
   return (
     <View style={styles.ballContainer} {...panResponder.panHandlers}>
-      <Text>IM ZBssALL</Text>
       <Canvas style={{ width: 480 }}>
         <ambientLight intensity={2.0} />
         <directionalLight position={[0, 10, 5]} intensity={1.5} />

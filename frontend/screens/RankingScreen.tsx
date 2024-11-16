@@ -6,6 +6,7 @@ import AppContext from "@/components/context/AppContext";
 
 interface RankingScreenProps{
   referralCode: string;
+  totalPoint: number;
 }
 
 interface LeaderBoard{
@@ -81,6 +82,7 @@ const RankingScreen:React.FC<RankingScreenProps> = ({referralCode}) =>{
     </View>
   );
 }
+export default RankingScreen;
 
 const styles = StyleSheet.create({
   screen: {

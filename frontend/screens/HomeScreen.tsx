@@ -1,16 +1,39 @@
-import React, { useState, useEffect, useContext } from "react";
-import { View, Text, Image, StyleSheet } from "react-native";
+import React, { useState, useEffect, useContext, useRef } from "react";
+import { View, Text, Image, StyleSheet, AppState } from "react-native";
 import { Ball } from "../components/Ball";
 import AppContext from "@/components/context/AppContext";
 import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import ProgressBar from "@/components/ProgressBar";
 
 interface HomeScreenProps {
   isSpin: boolean;
+  referralCode: string;
+  totalPoint: number;
 }
 
-const HomeScreen: React.FC<HomeScreenProps> = ({ isSpin }) => {
-  const [spinCount, setSpinCount] = useState(0);
-  const [count, setCount] = useState(0);
+const HomeScreen: React.FC<HomeScreenProps> = ({ isSpin, referralCode }) => {
+  const {url} = useContext(AppContext);
+  const [dbSpin, setDbSpin] = useState<number>(0);
+  const [dbSlide, setDbSlide] = useState<number>(0);
+  const [spinCount, setSpinCount] = useState<number>(0);
+  const [count, setCount] = useState<number>(0);
+  const [maxSpinCount, setMaxSpinCount] = useState<number>(0);
+  const [maxCount, setMaxCount] = useState<number>(0);
+  const appState = useRef(AppState.currentState);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const countRef = useRef(count);
+
+  const getTodayMaxCount = async() => {
+    try{
+      const response = await axios.get(`${url}/getTodayMaxCount`,{headers:{"Content-Type":"application/json"}});
+
+      setMaxCount(response.data.data.results[0][0].slide_max_count);
+      setMaxSpinCount(response.data.data.results[0][0].spin_max_count);
+    }catch(error){
+      console.error(error);
+    }
+  }
 
   useEffect(() => {
     const ws = new WebSocket("ws://192.168.45.160:8080");
@@ -26,6 +49,61 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ isSpin }) => {
     };
   }, []);
 
+  const getTodayCount = async () => {
+    try{
+      console.log("REFER",referralCode)
+      const response = await axios.post(`${url}/getTodayCount`, { user_id: referralCode }, {headers:{'Content-Type':'application/json'}});
+      if(response.data.result === 1){
+        console.log("CHECK",response.data.data.results[0]);
+        if(response.data.data.results[0].length === 0) return;
+        setSpinCount(response.data.data.results[0][0].spin_count);
+        setCount(response.data.data.results[0][0].slide_count);
+        setDbSlide(response.data.data.results[0][0].slide_count);
+        setDbSpin(response.data.data.results[0][0].spin_count);
+      }
+    }catch(error){
+      console.error(error);
+    }
+  }
+
+  const sendCount = async (count:number) => {
+    try{
+      const token = await AsyncStorage.getItem('authToken');
+      console.log("SENDCount",referralCode);
+      const response = await axios.post(`${url}/addCount`,{spin_count: spinCount - dbSpin, slide_count: count - dbSlide},{headers: {"Content-Type":"application/json", "Authorization":`${token}` }});
+      console.log("SEND", response.data);
+
+    }catch(error){
+      console.error(error);
+    }
+  }
+
+  useEffect(() => {
+    countRef.current = count;
+  }, [count]);
+
+  // useEffect(() => {
+  //   const handleAppStateChange = (nextAppState:string) => {
+  //     if (appState.current.match(/active/) && nextAppState === 'background') {
+  //       console.log("COUNTREF",countRef.current,dbSlide);
+  //       sendCount(countRef.current - dbSlide); // 백그라운드로 전환 시 실행
+  //     }
+  //     appState.current = nextAppState as AppStateStatus;
+  //   };
+
+  //   const subscription = AppState.addEventListener("change", handleAppStateChange);
+
+  //   return () => {
+  //     subscription.remove();
+  //   };
+  // }, []);
+
+  useEffect(() => {
+    if(referralCode.length === 0) return;
+    getTodayCount();
+    getTodayMaxCount();
+  }, [referralCode]);
+
   return (
     <View
       style={[styles.mainContent, isSpin && { backgroundColor: "#FFA500" }]}
@@ -40,9 +118,14 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ isSpin }) => {
           style={[styles.bubbleTail, isSpin && { borderTopColor: "#FFFFFF" }]}
         />
       </View>
-
-      <Ball isSpin={isSpin} setCount={setCount} spinCount={spinCount} />
-      <View style={styles.progressContainer}></View>
+      <Ball isSpin={isSpin} setCount={setCount} spinCount={spinCount} count={count} sendCount={sendCount}/>
+      <View style={styles.progressContainer}>
+        {isSpin ? (
+          <ProgressBar value={spinCount} maxValue={maxSpinCount} isSpin={isSpin} />
+        ) : (
+          <ProgressBar value={count} maxValue={maxCount} isSpin={isSpin} />
+        )}
+      </View>
     </View>
   );
 };
