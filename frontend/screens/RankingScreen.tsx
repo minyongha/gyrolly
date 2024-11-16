@@ -1,8 +1,28 @@
 import { StyleSheet, Text, View, Image, ScrollView } from "react-native";
-import React from "react";
+import React, { useContext, useEffect } from "react";
 import { rankingData } from "../constants";
+import axios from "axios";
+import { AppContext } from "../context/AppContext";
 
 export default function RankingScreen() {
+  const { state } = useContext(AppContext);
+
+  const getLeaderboard = async () => {
+    try {
+      console.log(state.url);
+      const response = await axios.post(`http://localhost:5002/api/getLeaderboard`,{from:1, to:100},{headers: {"Content-Type":"application/json"}})
+      console.log("LeaderBoard", response.data.data);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+  
+  useEffect(() => {
+    if(!state) return;
+    getLeaderboard();
+  }, [state])
+  
+
   return (
     <View style={styles.screen}>
       <View style={styles.container}>
