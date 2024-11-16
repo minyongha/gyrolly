@@ -27,14 +27,16 @@ export default function App() {
 
   return (
     <AppContext.Provider value={values}>
-      <Stack.Navigator>
-        <Stack.Screen name="Home">
-          {(props) => <HomeScreen isSpin={true} />}
-        </Stack.Screen>
-        <Stack.Screen name="Ranking">
-          {(props) => <RankingScreen />}
-        </Stack.Screen>
-      </Stack.Navigator>
+      <NavigationContainer>
+        <Stack.Navigator>
+          <Stack.Screen name="Home">
+            {(props) => <HomeScreen isSpin={true} />}
+          </Stack.Screen>
+          <Stack.Screen name="Ranking">
+            {(props) => <RankingScreen />}
+          </Stack.Screen>
+        </Stack.Navigator>
+      </NavigationContainer>
       <View style={styles.container}>
         {/* <Text>Open up App.tsx to start working on your app!</Text> */}
         <StatusBar style="auto" />
