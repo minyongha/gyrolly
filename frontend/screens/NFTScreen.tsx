@@ -1,7 +1,32 @@
-import { Image, Text, View, StyleSheet, ScrollView } from "react-native";
+import {
+  Image,
+  Text,
+  View,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+} from "react-native";
 import { nftData } from "../constants";
 
 const NFTScreen = () => {
+  const fakeApiCall = async () => {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve("API call success!");
+      }, 1000);
+    });
+  };
+
+  const handleBuyNow = async () => {
+    try {
+      console.log("Buy Now button clicked");
+      // 여기에 비동기 작업을 추가하세요 (예: API 호출 등)
+      const response = await fakeApiCall();
+      console.log("Response:", response);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
   return (
     <View style={styles.nftContainer}>
       <View style={styles.pointContainer}>
@@ -20,9 +45,11 @@ const NFTScreen = () => {
               <Text style={styles.ballName}>{item.name}</Text>
               <Text>point: {item.point.toLocaleString()}</Text>
               {item.isLocked ? (
-                <View style={styles.buyNowButton}>
-                  <Text style={styles.buyNowText}>Buy Now</Text>
-                </View>
+                <TouchableOpacity onPress={handleBuyNow}>
+                  <View style={styles.buyNowButton}>
+                    <Text style={styles.buyNowText}>Buy Now</Text>
+                  </View>
+                </TouchableOpacity>
               ) : (
                 <View></View>
               )}
