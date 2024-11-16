@@ -420,4 +420,209 @@ db.query(query, (err, results, fields) => {
   console.log("쿼리 결과:", results);
 });
 
+
+var query = "DROP PROCEDURE IF EXISTS add_count;";
+db.query(query, (err, results, fields) => {
+  if (err) {
+    console.error("쿼리 실행에 실패했습니다:", err);
+    return;
+  }
+
+  console.log("쿼리 결과:", results);
+});
+
+var query = `
+  CREATE PROCEDURE add_count (
+    IN input_token CHAR(64),
+    IN input_spin_count INT,
+    IN input_slide_count INT
+  )
+  BEGIN
+    DECLARE temp_spin_point_per_count INT;
+    DECLARE temp_slide_point_per_count INT;
+    DECLARE temp_nft_count INT;
+    DECLARE temp_nft_benefit INT;
+    DECLARE temp_user_id CHAR(8);    
+    SELECT 
+      spin_point_per_count, 
+      slide_point_per_count,
+      nft_benefit
+    INTO 
+      temp_spin_point_per_count, 
+      temp_slide_point_per_count,
+      temp_nft_benefit
+    FROM config
+    ORDER BY id DESC LIMIT 1;
+
+    SELECT user_id INTO temp_user_id FROM auth_tokens WHERE token = input_token;
+    SELECT nft_count INTO temp_nft_count FROM user WHERE user_id = temp_user_id;
+
+    INSERT INTO daily_count (user_id, date, spin_count, slide_count)
+    VALUES (temp_user_id, CURDATE(), input_spin_count, input_slide_count)
+    ON DUPLICATE KEY UPDATE 
+        spin_count = spin_count + input_spin_count,
+        slide_count = slide_count + input_slide_count,
+        nft_point = nft_point + ((input_spin_count * temp_spin_point_per_count + input_slide_count * temp_slide_point_per_count) * temp_nft_count * temp_nft_benefit);
+  END;
+`;
+
+db.query(query, (err, results, fields) => {
+  if (err) {
+    console.error("쿼리 실행에 실패했습니다:", err);
+    return;
+  }
+
+  console.log("쿼리 결과:", results);
+});
+
+// 4. auth_tokens 추가 및 업데이트
+var query = "DROP PROCEDURE IF EXISTS upsert_token;";
+db.query(query, (err, results, fields) => {
+  if (err) {
+    console.error("쿼리 실행에 실패했습니다:", err);
+    return;
+  }
+
+  console.log("쿼리 결과:", results);
+});
+
+var query = `
+  CREATE PROCEDURE upsert_token (
+    IN input_user_id CHAR(8),
+    IN input_token CHAR(64)
+  )
+  BEGIN
+      DECLARE user_exists INT DEFAULT 0;
+
+      -- user_id가 존재하는지 확인
+      SELECT COUNT(*) INTO user_exists
+      FROM auth_tokens
+      WHERE user_id = input_user_id;
+
+      -- user_id가 존재하지 않으면 insert_token 호출
+      IF user_exists = 0 THEN
+          CALL insert_token(input_user_id, input_token);
+      -- 존재하면 set_token 호출
+      ELSE
+          CALL set_token(input_user_id, input_token);
+      END IF;
+  END;
+`;
+
+db.query(query, (err, results, fields) => {
+  if (err) {
+    console.error("쿼리 실행에 실패했습니다:", err);
+    return;
+  }
+
+  console.log("쿼리 결과:", results);
+});
+
+
+// 이벤트 스케줄러
+var query = `SET GLOBAL event_scheduler = ON;`;
+// 매일 0시
+// [daily_count] referral_point 업데이트 - 오늘 날짜, 데이터 없으면 insert / 있으면 update, spin_count*spin_point_per_count + slide_count*slide_point_per_count + daily_count.nft_point) * config.referral_benefit
+// daily_count 데이터를 user 테이블에 업데이트
+var query = `
+  CREATE EVENT IF NOT EXISTS update_total_count
+  ON SCHEDULE EVERY 1 DAY
+  STARTS '2024-11-02 00:00:00'
+  DO
+  BEGIN
+    DECLARE temp_spin_point_per_count INT;
+    DECLARE temp_slide_point_per_count INT;
+    DECLARE temp_referral_benefit DECIMAL(2,2);
+    SELECT 
+      spin_point_per_count, 
+      slide_point_per_count, 
+      nft_benefit
+    INTO 
+      temp_spin_point_per_count, 
+      temp_slide_point_per_count, 
+      temp_referral_benefit
+    FROM config
+    ORDER BY id DESC LIMIT 1;
+
+    
+    INSERT INTO daily_count (user_id, date, referral_point)
+    SELECT u.referral_user_id, CURDATE() AS date,
+      (dc.spin_count * temp_spin_point_per_count + dc.slide_count * temp_slide_point_per_count + dc.nft_point) * temp_referral_benefit AS temp_referral_point
+    FROM daily_count dc
+    LEFT JOIN user u
+    ON dc.user_id = u.user_id
+      AND u.referral_user_id IS NOT NULL
+    WHERE dc.date = CURDATE()
+    ON DUPLICATE KEY UPDATE 
+      date = CURDATE(),
+      referral_point = FLOOR((spin_count * temp_spin_point_per_count + slide_count * temp_slide_point_per_count + nft_point) * temp_referral_benefit);
+
+    UPDATE user u
+    JOIN daily_count dc ON u.user_id = dc.user_id
+    SET 
+        u.total_count = u.total_count + dc.spin_count + dc.slide_count,
+        u.total_point = u.total_count + dc.spin_count * temp_spin_point_per_count + dc.slide_count * temp_slide_point_per_count + dc.nft_point + dc.referral_point
+    WHERE dc.date = CURDATE();
+
+  END;
+`;
+
+var query = "DROP PROCEDURE IF EXISTS update_total_count;";
+db.query(query, (err, results, fields) => {
+  if (err) {
+    console.error("쿼리 실행에 실패했습니다:", err);
+    return;
+  }
+
+  console.log("쿼리 결과:", results);
+});
+
+var query = `
+  CREATE PROCEDURE update_total_count ()
+  BEGIN
+    DECLARE temp_spin_point_per_count INT;
+    DECLARE temp_slide_point_per_count INT;
+    DECLARE temp_referral_benefit DECIMAL(2,2);
+    SELECT 
+      spin_point_per_count, 
+      slide_point_per_count, 
+      referral_benefit
+    INTO 
+      temp_spin_point_per_count, 
+      temp_slide_point_per_count, 
+      temp_referral_benefit
+    FROM config
+    ORDER BY id DESC LIMIT 1;
+    
+    INSERT INTO daily_count (user_id, date, referral_point)
+    SELECT u.referral_user_id, CURDATE() AS date,
+      FLOOR((dc.spin_count * temp_spin_point_per_count + dc.slide_count * temp_slide_point_per_count + dc.nft_point) * temp_referral_benefit) AS temp_referral_point
+    FROM daily_count dc
+    LEFT JOIN user u
+    ON dc.user_id = u.user_id
+    WHERE dc.date = CURDATE()
+      AND u.referral_user_id IS NOT NULL
+    ON DUPLICATE KEY UPDATE 
+      date = CURDATE(),
+      referral_point = FLOOR((dc.spin_count * temp_spin_point_per_count + dc.slide_count * temp_slide_point_per_count + dc.nft_point) * temp_referral_benefit);
+
+    UPDATE user u
+    JOIN daily_count dc ON u.user_id = dc.user_id
+    SET 
+        u.total_count = u.total_count + dc.spin_count + dc.slide_count,
+        u.total_point = u.total_point + dc.spin_count * temp_spin_point_per_count + dc.slide_count * temp_slide_point_per_count + dc.nft_point + dc.referral_point
+    WHERE dc.date = CURDATE();
+
+  END;
+`;
+
+db.query(query, (err, results, fields) => {
+  if (err) {
+    console.error("쿼리 실행에 실패했습니다:", err);
+    return;
+  }
+
+  console.log("쿼리 결과:", results);
+});
+
 db.end();

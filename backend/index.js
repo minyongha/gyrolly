@@ -28,6 +28,16 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
+function verifySignedTimestamp(timestamp, signature, address) {
+  if (Math.abs(Date.now() - timestamp) > 60 * 1000) {
+    return false;
+  }
+
+  const message = timestamp.toString(); // timestamp를 문자열로 변환하여 서명 검증에 사용
+
+  return validateSignedMessage(message, signature, address);
+}
+
 function verifyToken(req, res, next) {
   const token = req.headers.authorization;
   const query = "CALL verify_token (?)";
@@ -45,10 +55,6 @@ function verifyToken(req, res, next) {
     next();
   });
 }
-
-app.get("/api/message", (req, res) => {
-  res.json({ message: "Hello from the server!" });
-});
 
 app.post("/api/getUser", (req, res) => {
   const query = "CALL get_user (?) ";
@@ -97,11 +103,11 @@ app.post("/api/setUser", verifyToken, upload.none(), (req, res) => {
   });
 });
 
-app.post("/getAuthToken", (req, res) => {
+app.post("/api/getAuthToken", (req, res) => {
   const { timestamp, signature, address } = req.body;
 
   if (verifySignedTimestamp(timestamp, signature, address)) {
-    const query = 'CALL set_token (?, ?)';
+    const query = "CALL set_token (?, ?)";
     const token = crypto.randomBytes(32).toString("hex");
     const userId = encodeEthereumAddress(address);
     const values = [userId, token];
@@ -139,12 +145,82 @@ app.post("/getAuthToken", (req, res) => {
   }
 });
 
-app.post("/signUp", (req, res) => {
-    const query = 'CALL insert_user (?,?,?)';
-    const { walletAddress, nickname } = req.body;
-    const userId = encodeEthereumAddress(walletAddress);
+app.post("/api/signUp", (req, res) => {
+  const query = "CALL insert_user (?,?,?)";
+  const { walletAddress, nickname } = req.body;
+  const userId = encodeEthereumAddress(walletAddress);
+
+  const values = [userId, walletAddress, nickname];
+
+  db.query(query, values, (err, results) => {
+    if (err) {
+      res.json({
+        result: 0,
+        message: err.message,
+        data: {},
+      });
+      return;
+    }
+
+    res.json({
+      result: 1,
+      message: "success",
+      data: { results },
+    });
+  });
+});
+
+app.post("/api/getTodayCount", (req, res) => {
+    const query = 'CALL get_today_count (?)';
+    const { user_id } = req.body;  
+    const values = [user_id];
   
-    const values = [userId, walletAddress, nickname];
+    db.query(query, values, (err, results) => {
+      if (err) {
+        res.json({
+          result: 0,
+          message: err.message,
+          data: {},
+        });
+        return;
+      }
+  
+      res.json({
+        result: 1,
+        message: "success",
+        data: { results },
+      });
+    });
+  });
+
+  app.post("/api/getDailyCount", (req, res) => {
+    const query = 'CALL get_week_point (?)';
+    const { user_id } = req.body;
+    const values = [user_id];
+  
+    db.query(query, values, (err, results) => {
+      if (err) {
+        res.json({
+          result: 0,
+          message: err.message,
+          data: {},
+        });
+        return;
+      }
+  
+      res.json({
+        result: 1,
+        message: "success",
+        data: { results },
+      });
+    });
+  });
+
+  app.post("/addCount", verifyToken, (req, res) => {
+    const query = 'CALL add_count (?,?,?)';
+    const token = req.headers.authorization;
+    const { spin_count, slide_count } = req.body;
+    const values = [token, spin_count, slide_count];
   
     db.query(query, values, (err, results) => {
       if (err) {
@@ -198,15 +274,24 @@ app.post("/api/getTotalPoint", (req, res) => {
 });
 
 app.post("/api/getTotalCount", (req, res) => {
-  const query = "select total_count from user where user_id = ?";
+  const query = "CALL get_total_point (?)";
   const { user_id } = req.body;
   const values = [user_id];
   db.query(query, values, (err, results) => {
     if (err) {
-      console.error("getTotalCount Error", err);
-      return res.status(500).json({ error: "DB 에러" });
+      res.json({
+        result: 0,
+        message: err.message,
+        data: {},
+      });
+      return;
     }
-    res.json(results);
+
+    res.json({
+      result: 1,
+      message: "success",
+      data: { results },
+    });
   });
 });
 
@@ -217,46 +302,6 @@ app.post("/api/getNftPoint", (req, res) => {
   db.query(query, values, (err, results) => {
     if (err) {
       console.error("getTotalPoint Error", err);
-      return res.status(500).json({ error: "DB 에러" });
-    }
-    res.json(results);
-  });
-});
-
-app.post("/api/getSlideCount", (req, res) => {
-  const query = "select slide_count from daily_count where user_id = ? ";
-  const { user_id } = req.body;
-  const values = [user_id];
-  db.query(query, values, (err, results) => {
-    if (err) {
-      console.error("getSlideCount Error", err);
-      return res.status(500).json({ error: "DB 에러" });
-    }
-    res.json(results);
-  });
-});
-
-app.post("/api/getSpinCount", (req, res) => {
-  const query = "select spin_count from daily_count where user_id = ? ";
-  const { user_id } = req.body;
-  const values = [user_id];
-  db.query(query, values, (err, results) => {
-    if (err) {
-      console.error("getSlideCount Error", err);
-      return res.status(500).json({ error: "DB 에러" });
-    }
-    res.json(results);
-  });
-});
-
-app.post("/api/setCount", (req, res) => {
-  const query =
-    "update daily_count set slide_count = ?, spin_count = ? where user_id = ?";
-  const { user_id, slide_count, spin_count } = req.body;
-  const values = [slide_count, spin_count, user_id];
-  db.query(query, values, (err, results) => {
-    if (err) {
-      console.error("setCount Error", err);
       return res.status(500).json({ error: "DB 에러" });
     }
     res.json(results);
@@ -304,6 +349,22 @@ app.post("/api/getLeaderboard", (req, res) => {
       message: "success",
       data: { results },
     });
+  });
+});
+
+app.get("/getTimeStamp", (req, res) => {
+  return res.json({
+    result: 1,
+    message: "success",
+    data: {
+      results: [
+        [
+          {
+            timestamp: Date.now(),
+          },
+        ],
+      ],
+    },
   });
 });
 
