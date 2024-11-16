@@ -1,13 +1,15 @@
-const express = require("express");
-const bodyParser = require("body-parser");
-const cors = require("cors");
-const { db } = require("./db_connection");
-const multer = require("multer");
+import express from "express";
+import { db } from "../db_connection.js";
+import crypto from "crypto";
+import multer from "multer";
+import path from "path";
+import fs from "fs";
+
+import { encodeEthereumAddress, validateSignedMessage } from "./lib/index.js";
 
 const app = express();
-const PORT = 5001;
+const PORT = 5003;
 
-app.use(cors());
 app.use(express.json());
 
 const storage = multer.diskStorage({
@@ -56,7 +58,7 @@ function verifyToken(req, res, next) {
   });
 }
 
-app.post("/api/getUser", (req, res) => {
+app.post("/getUser", (req, res) => {
   const query = "CALL get_user (?) ";
   const { user_id } = req.body;
   const values = [user_id];
@@ -78,7 +80,7 @@ app.post("/api/getUser", (req, res) => {
   });
 });
 
-app.post("/api/setUser", verifyToken, upload.none(), (req, res) => {
+app.post("/setUser", verifyToken, upload.none(), (req, res) => {
   const query = "CALL set_user (?,?,?,?) ";
   const token = req.headers.authorization;
   const { profile, nickname, referral_user_id } = req.body;
@@ -103,7 +105,7 @@ app.post("/api/setUser", verifyToken, upload.none(), (req, res) => {
   });
 });
 
-app.post("/api/getAuthToken", (req, res) => {
+app.post("/getAuthToken", (req, res) => {
   const { timestamp, signature, address } = req.body;
 
   if (verifySignedTimestamp(timestamp, signature, address)) {
@@ -145,7 +147,7 @@ app.post("/api/getAuthToken", (req, res) => {
   }
 });
 
-app.post("/api/signUp", (req, res) => {
+app.post("/signUp", (req, res) => {
   const query = "CALL insert_user (?,?,?)";
   const { walletAddress, nickname } = req.body;
   const userId = encodeEthereumAddress(walletAddress);
@@ -170,7 +172,7 @@ app.post("/api/signUp", (req, res) => {
   });
 });
 
-app.post("/api/getTodayCount", (req, res) => {
+app.post("/getTodayCount", (req, res) => {
     const query = 'CALL get_today_count (?)';
     const { user_id } = req.body;  
     const values = [user_id];
@@ -193,7 +195,7 @@ app.post("/api/getTodayCount", (req, res) => {
     });
   });
 
-  app.post("/api/getDailyCount", (req, res) => {
+  app.post("/getDailyCount", (req, res) => {
     const query = 'CALL get_week_point (?)';
     const { user_id } = req.body;
     const values = [user_id];
@@ -240,7 +242,7 @@ app.post("/api/getTodayCount", (req, res) => {
     });
   });
 
-app.get("/api/getTodayMaxCount", (req, res) => {
+app.get("/getTodayMaxCount", (req, res) => {
   const query = "CALL get_today_max_count ";
   db.query(query, (err, results) => {
     if (err) {
@@ -260,7 +262,7 @@ app.get("/api/getTodayMaxCount", (req, res) => {
   });
 });
 
-app.post("/api/getTotalPoint", (req, res) => {
+app.post("/getTotalPoint", (req, res) => {
   const query = "select total_point from user where user_id = ? ";
   const { user_id } = req.body;
   const values = [user_id];
@@ -273,7 +275,7 @@ app.post("/api/getTotalPoint", (req, res) => {
   });
 });
 
-app.post("/api/getTotalCount", (req, res) => {
+app.post("/getTotalCount", (req, res) => {
   const query = "CALL get_total_point (?)";
   const { user_id } = req.body;
   const values = [user_id];
@@ -295,7 +297,7 @@ app.post("/api/getTotalCount", (req, res) => {
   });
 });
 
-app.post("/api/getNftPoint", (req, res) => {
+app.post("/getNftPoint", (req, res) => {
   const query = "select nft_point from daily_count where user_id = ? ";
   const { user_id } = req.body;
   const values = [user_id];
@@ -308,7 +310,7 @@ app.post("/api/getNftPoint", (req, res) => {
   });
 });
 
-app.post("/api/getRank", (req, res) => {
+app.post("/getRank", (req, res) => {
   const query = "CALL get_rank (?) ";
   const { user_id } = req.body;
   const values = [user_id];
@@ -330,7 +332,7 @@ app.post("/api/getRank", (req, res) => {
   });
 });
 
-app.post("/api/getLeaderboard", (req, res) => {
+app.post("/getLeaderboard", (req, res) => {
   const query = "CALL get_leaderboard (?, ?) ";
   const { from, to } = req.body;
   const values = [from, to];
