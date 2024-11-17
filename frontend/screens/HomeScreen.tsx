@@ -36,7 +36,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ isSpin, referralCode }) => {
   }
 
   useEffect(() => {
-    const ws = new WebSocket("ws://10.24.60.53:8083");
+    const ws = new WebSocket("ws://10.24.19.86:8083");
     console.log("ws: ", ws);
 
     ws.onmessage = (event) => {
@@ -135,7 +135,6 @@ export default HomeScreen;
 const styles = StyleSheet.create({
   mainContent: {
     flex: 1,
-    fontFamily: "Lato",
     alignItems: "center",
     justifyContent: "center",
   },

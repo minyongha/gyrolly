@@ -15,6 +15,10 @@ import axios from "axios";
 import AppContext from "./context/AppContext";
 import { useWalletConnectModal } from "@walletconnect/modal-react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useNavigation } from "@react-navigation/native";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { RootStackParamList } from "@/App";
+
 
 interface HeaderProps {
   isSpin: boolean;
@@ -44,6 +48,8 @@ const Header: FC<HeaderProps> = ({ isSpin, setIsSpin, seletedIndex, referralCode
     useState<boolean>(false);
 
     const [userInfo, setUserInfo] = useState<User>();
+    const navigation =
+    useNavigation<NativeStackScreenProps<RootStackParamList>["navigation"]>();
 
     const getUserInfo = async() => {
       try{
@@ -90,6 +96,7 @@ const Header: FC<HeaderProps> = ({ isSpin, setIsSpin, seletedIndex, referralCode
                 if (provider) {
                   provider.session = undefined;
                 }
+                navigation.navigate("Login");
               }}
             >
               <Image source={profileImage} style={styles.profileImage} />
@@ -137,7 +144,7 @@ const styles = StyleSheet.create({
   headerText: {
     marginLeft: "7%",
     fontSize: 28,
-    fontFamily: "gamhong",
+    fontFamily: '문경 감흥사과',
     fontWeight: "900",
     fontStyle: "italic",
   },
@@ -152,7 +159,6 @@ const styles = StyleSheet.create({
     zIndex: 1,
     marginRight:4,
     marginLeft:6,
-    backgroundColor:"red"
   },
   profileImage: {
     width: 35,

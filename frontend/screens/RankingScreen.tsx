@@ -31,7 +31,7 @@ const RankingScreen: React.FC<RankingScreenProps> = ({ referralCode }) => {
         { user_id: referralCode },
         { headers: { "Content-Type": "application/json" } }
       );
-      setRank(response.data.data.results[0][0].my_rank);
+      // setRank(response.data.data.results[0]);
     } catch (error) {
       console.error(error);
     }
@@ -56,6 +56,16 @@ const RankingScreen: React.FC<RankingScreenProps> = ({ referralCode }) => {
     getLeaderboard();
   }, [referralCode]);
 
+  const rankingImages: {[key:number]:any} = {
+    1: require('../assets/images/ranking/p1.png'),
+    2: require('../assets/images/ranking/p2.png'),
+    3: require('../assets/images/ranking/p3.png'),
+    4: require('../assets/images/ranking/p4.png'),
+    5: require('../assets/images/ranking/p5.png'),
+    6: require('../assets/images/ranking/p6.png'),
+    7: require('../assets/images/ranking/p7.png'),
+  };
+
   return (
     <View style={styles.screen}>
       <View style={styles.container}>
@@ -63,7 +73,9 @@ const RankingScreen: React.FC<RankingScreenProps> = ({ referralCode }) => {
           {rankingData.slice(0, 3).map((rank, index) => (
             <View key={index} style={styles.topProfile}>
               <Image
-                source={rank.image}
+                source={
+                  rankingImages[index+1]
+                }
                 style={
                   index === 1
                     ? styles.profileImageFirst
@@ -79,7 +91,7 @@ const RankingScreen: React.FC<RankingScreenProps> = ({ referralCode }) => {
           {rankingData.slice(3).map((rank, index) => (
             <View key={index} style={styles.rankItem}>
               <Text style={styles.rankItemText}>{rank.rank}</Text>
-              <Image style={styles.rankItemImage} source={rank.image} />
+              <Image style={styles.rankItemImage} source={rankingImages[index+4]}/>
               <Text style={styles.rankItemText}>{rank.name}</Text>
               <Text style={styles.rankItemText}>{rank.score}</Text>
             </View>

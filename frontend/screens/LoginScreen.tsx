@@ -48,7 +48,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
   const { open, isConnected, provider, address } = useWalletConnectModal();
   const { setNickname, nickname, url } = useContext(AppContext);
   const web3Provider = useMemo(
-    () => (provider ? new ethers.providers.JsonRpcProvider("https://testnet.evm.nodes.onflow.org") : undefined),
+    () => (provider ? new ethers.providers.JsonRpcProvider("https://api.tatum.io/v3/blockchain/node/flow-testnet") : undefined),
     [provider]
   );
 
