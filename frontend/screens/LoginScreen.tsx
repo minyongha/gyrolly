@@ -40,7 +40,7 @@ type LoginScreenProps = NativeStackScreenProps<RootStackParamList, "Login"> & {
   setIsLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-const logo = require("../assets/images/logo.png");
+const logo = require("../assets/images/logo-full.png");
 
 const LoginScreen: React.FC<LoginScreenProps> = ({
   setIsLoggedIn,
@@ -146,7 +146,6 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
     <>
       <dynamicClient.reactNative.WebView />
       <View style={styles.container}>
-        <Text style={styles.title}>Gyrolly</Text>
         <Image source={logo} style={styles.image} />
         <Pressable onPress={handleButtonPress} style={styles.button}>
           <Text style={styles.buttonText}>Connect Wallet</Text>
