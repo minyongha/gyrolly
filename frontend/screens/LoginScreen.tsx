@@ -24,7 +24,7 @@ const providerMetadata = {
   url: "https://your-project-website.com/",
   icons: ["https://your-project-logo.com/"],
   redirect: {
-    native: "exp://10.0.0.124:8081",
+    native: "exp://10.24.60.53:8081",
     universal: "YOUR_APP_UNIVERSAL_LINK.com",
   },
 };
@@ -58,9 +58,6 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
 
   const handleButtonPress = async () => {
     dynamicClient.ui.auth.show();
-    if (dynamicClient.wallets.primary?.address) {
-      setIsLoggedIn(true);
-    }
 
     // if (isConnected) {
     //   return provider?.disconnect();
